@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>iOS 免AppStore下载</title>
+  <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css" media="screen" title="no title" charset="utf-8">
+  <script src="/bower_components/jquery/dist/jquery.min.js" charset="utf-8"></script>
+  <script src="/bower_components/angular/angular.min.js" charset="utf-8"></script>
+  <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js" charset="utf-8"></script>
+  <style media="screen">
+    td {
+      vertical-align: middle !important;
+    }
+
+    tbody tr:first-child td {
+      /*border-top: none !important;*/
+    }
+
+    @media (min-width: 1200px) {
+      .container {
+        width: 900px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div ng-app="myapp" ng-controller="main">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12" style="padding: 10px; background: #eee; ">
+          <form ng-submit="submit()">
+            <div class="input-group">
+              <input type="text" ng-model="formData.keyword" class="form-control" autofocus>
+              <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit">搜索下载地址</button>
+              </span>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12" style="padding: 0">
+          <div ng-if="loading">
+            <p class="text-center" style="margin: 20px; ">
+              加载中 ...
+            </p>
+          </div>
+          <table class="table table-hover" ng-if="! loading">
+            <thead>
+              <tr>
+                <td>
+                  #
+                </td>
+                <td>
+                  图标
+                </td>
+                <td>
+                  名称
+                </td>
+                <td>
+                  类别
+                </td>
+                <td>
+                  版本
+                </td>
+                <td>
+                  大小
+                </td>
+                <td>
+                  更新时间
+                </td>
+                <td class="">
+                </td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="d in data.content">
+                <td>
+                  {{(formData.page - 1) * 15 + $index + 1}}
+                </td>
+                <td style="width: 80px; ">
+                  <img ng-src="{{d.thumb}}" alt="" />
+                </td>
+                <td>
+                  {{d.title}}
+                </td>
+                <td>
+                  {{d.catName}}
+                </td>
+                <td>
+                  {{d.version}}
+                </td>
+                <td>
+                  {{d.fsize}}
+                </td>
+                <td>
+                  {{d.updatetime * 1000 | date:'yyyy-MM-dd'}}
+                </td>
+                <td class="text-right">
+                  <a href="{{d.downurl}}" class="btn btn-primary" target="_blank">下载</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 text-center">
+          <ul class="pagination">
+            <li>
+              <a href="javascript:" ng-click="search(formData.keyword, formData.page - 1)" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            <li ng-repeat="x in pagenos" ng-class="{active:(formData.page == x)}">
+              <a href="javascript:" ng-click="search(formData.keyword, x)">{{x}}</a>
+            </li>
+            <li>
+              <a href="javascript:" ng-click="search(formData.keyword, formData.page + 1)" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var app = angular.module('myapp', []);
+
+    app.controller('main', ['$scope', '$http',
+      function($scope, $http) {
+
+        $scope.formData = {
+          keyword: 'zhihuribao',
+          page: 1
+        }
+        $scope.pagenos = [1];
+
+        $scope.submit = function() {
+          $scope.loading = true;
+          $scope.formData.page = 1;
+
+          $http.post('api.php', $scope.formData).then(function(res) {
+            $scope.data = res.data;
+            $scope.loading = false;
+
+            $scope.pagenos = [];
+
+            var start = 1;
+            var end = $scope.data.pageCount > 10 ? 10 : $scope.data.pageCount;
+            for (i = start; i <= end; i ++) {
+              $scope.pagenos.push(i);
+            }
+
+          })
+        }
+
+        $scope.search = function(keyword, page) {
+          $scope.formData.keyword = keyword;
+          $scope.formData.page = page;
+          $scope.submit();
+        }
+
+      }
+    ]);
+  </script>
+
+</body>
+
+</html>
