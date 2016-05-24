@@ -7,7 +7,7 @@
 将 src 下面的文件，放到web目录下，然后用 `bower` 安装所需要的库
 
 ```
-bower install angularjs bootstrap jquery
+bower install angularjs bootstrap jquery angularLocalStorage angular-cookies
 ```
 
 ## 使用
