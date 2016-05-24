@@ -31,7 +31,7 @@
     <div class="container">
       <div class="row">
         <div class="col-xs-12" style="padding: 10px; background: #eee; ">
-          <form ng-submit="submit()">
+          <form ng-submit="search(formData.keyword, 1)">
             <div class="input-group">
               <input type="text" ng-model="formData.keyword" class="form-control" autofocus>
               <span class="input-group-btn">
@@ -144,9 +144,10 @@
         }
         $scope.pagenos = [1];
 
-        $scope.submit = function() {
+        $scope.search = function(keyword, page) {
+          $scope.formData.keyword = keyword;
+          $scope.formData.page = page;
           $scope.loading = true;
-          $scope.formData.page = 1;
 
           $http.post('api.php', $scope.formData).then(function(res) {
             $scope.data = res.data;
@@ -161,12 +162,6 @@
             }
 
           })
-        }
-
-        $scope.search = function(keyword, page) {
-          $scope.formData.keyword = keyword;
-          $scope.formData.page = page;
-          $scope.submit();
         }
 
       }
