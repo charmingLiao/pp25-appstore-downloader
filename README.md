@@ -10,3 +10,4 @@ bower install angularjs bootstrap jquery
 
 访问刚才的web目录，
 
+![Alt text](https://raw.githubusercontent.com/CaledoniaProject/pp25-appstore-downloader/master/contrib/screenshot.jpg "screenshot")
